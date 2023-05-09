@@ -12,10 +12,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class RumahMakan {
     int id;
@@ -23,6 +26,8 @@ public class RumahMakan {
     Scene scene;
     GridPane container;
     VBox gambarContainer, deskripsi;
+    int jumlahRating = 0;
+    int sumRating;
     String nama;
     String kategori;
     String alamat;
@@ -45,12 +50,9 @@ public class RumahMakan {
         this.alamat = alamat; alamatText.setText(alamat);
         this.noTelp = noTelp; noTelpText.setText(noTelp);
         this.rating = rating;
+        ratingText = new Text(this.rating);
         allObjects.add(this);
 
-    }
-    public RumahMakan(RumahMakan rm){
-//        this(rm.id, rm.nama, rm.kategori, rm.alamat, rm.noTelp, rm.rating, "a.png");
-//        this = rm;
     }
 
     public GridPane getDeskripsi() {
@@ -65,10 +67,10 @@ public class RumahMakan {
         gambarContainer = new VBox(20);
         gambarContainer.getChildren().add(gambar);
         hapus.setOnMouseClicked(e -> {
-            this.hapus();
+            Delete.deleteConfirm(this);
         });
-        update.setOnMouseClicked(e -> {
-            this.update();
+        rate.setOnMouseClicked(e -> {
+            this.rate();
         });
         update.setOnMouseClicked(e -> {
             Update.display(this);
@@ -92,7 +94,7 @@ public class RumahMakan {
         HBox containerRating = new HBox(20);
 
         HBox.setMargin(containerRating, new Insets(20, 0, 0, 0));
-        ratingText = new Text(this.rating);
+
         containerRating.getChildren().add(ratingText);
 
         container.add(gambarContainer, 0, 0);
@@ -102,35 +104,7 @@ public class RumahMakan {
         return container;
     }
 
-    public void hapus() {
-        if (MainMenu.isLoginned) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Soryy :(");
-            alert.setContentText("This functionality hasn't been implemented,lol");
-            alert.show();
-        }
-        else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("WARNING!");
-            alert.setContentText("You're not admin, proceed to delete System32");
-            alert.show();
-        }
-    }
 
-    public void update() {
-        if (MainMenu.isLoginned) {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Soryy :(");
-            alert.setContentText("This functionality hasn't been implemented,lol");
-            alert.show();
-        }
-        else {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("WARNING!");
-            alert.setContentText("You're not admin, proceed to delete System32");
-            alert.show();
-        }
-    }
 
     public static void disableRating(boolean t){
         for (RumahMakan i : allObjects){
@@ -158,4 +132,59 @@ public class RumahMakan {
         return rm;
     }
 
+    public void rate() {
+
+        Button satu = new Button("1");
+        satu.setOnMouseClicked(e -> {
+            ratingText.setText("1");
+            updateRating();
+        });
+        Button dua = new Button("2");
+        dua.setOnMouseClicked(e -> {
+            ratingText.setText("2");
+            updateRating();
+        });
+        Button tiga = new Button("3");
+        tiga.setOnMouseClicked(e -> {
+            ratingText.setText("3");
+            updateRating();
+        });
+        Button empat = new Button("4");
+        empat.setOnMouseClicked(e -> {
+            ratingText.setText("4");
+            updateRating();
+        });
+        Button lima = new Button("5");
+        lima.setOnMouseClicked(e -> {
+            ratingText.setText("5");
+            updateRating();
+        });
+
+        Stage stage = new Stage();
+        HBox containerRating = new HBox(satu, dua, tiga, empat, lima);
+        Scene scene = new Scene(containerRating, 200, 200);
+
+        containerRating.setSpacing(20);
+        stage.setScene(scene);
+        stage.setResizable(false);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
+    }
+
+    private void updateRating() {
+            try {
+                int ratingInt = Integer.parseInt(ratingText.getText());
+                sumRating += ratingInt;
+                jumlahRating++;
+                float rataRata = (float) sumRating / (float )jumlahRating;
+                String sql = "UPDATE restoran SET rating = " +
+                        rataRata +
+                        "WHERE id = " + this.id;
+                Koneksi.statement.execute(sql);
+                ratingText.setText(Float.toString(rataRata));
+            } catch (Exception exc) {
+                exc.printStackTrace();
+            }
+
+    }
 }

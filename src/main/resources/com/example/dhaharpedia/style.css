@@ -1,0 +1,25 @@
+.top, .footer {
+    -fx-background-color: #0077b6;
+    -fx-padding: 20 0 20 0;
+}
+
+.left {
+    -fx-background-color: #00b4d8;
+    -fx-min-width: 250px;
+}
+
+.judul, .footer, .left{
+    -fx-font-family: 'Times New Roman';
+    -fx-font-size: 24;
+    -fx-fill: white;
+}
+
+.h2 {
+        -fx-font-family: 'Times New Roman';
+        -fx-font-size: 24;
+}
+
+.left .button {
+    -fx-font-size: 16;
+    -fx-min-width: 200;
+}

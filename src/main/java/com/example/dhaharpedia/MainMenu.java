@@ -1,11 +1,14 @@
 package com.example.dhaharpedia;
 
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -14,11 +17,11 @@ import javafx.scene.text.Text;
 import java.sql.ResultSet;
 
 public class MainMenu extends User{
-    public static boolean isLoginned = false;
-    public static Text loginAs = new Text();
+    public static boolean isLoginned = true;
+    public static Text loginAs = new Text("Loginned as a guest");
     public static TextField searchBar;
     public static Button login, go;
-    public Button best, kategori;
+    public Button best, kategori, tambahMakanan, tambahKategori;
     private BorderPane bp = new BorderPane();
     public MainMenu(){
 
@@ -41,6 +44,14 @@ public class MainMenu extends User{
             Login.display();
         });
         searchBar = new TextField();
+        searchBar.setOnKeyPressed(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent ke) {
+                if (ke.getCode().equals(KeyCode.ENTER)) {
+                    search();
+                }
+            }
+        });
 
         searchContainer.getChildren().addAll(searchBar, go, login);
         hb.getChildren().addAll(logo, judul);
@@ -63,9 +74,13 @@ public class MainMenu extends User{
 
         //====================== LEFT =============================
         VBox leftContainer = new VBox(75); leftContainer.setAlignment(Pos.CENTER);
-        best = new Button("Best Rumah Makan");
+        best = new Button("Peringkat Teratas");
         kategori = new Button("Kategori");
-        leftContainer.getChildren().addAll(best, kategori);
+        tambahMakanan = new Button("Tambah Makanan");
+        tambahKategori = new Button("Tambah Kategori");
+        VBox containerMakanan = new VBox(best, tambahMakanan);
+        VBox containerKategori = new VBox(kategori, tambahKategori);
+        leftContainer.getChildren().addAll(containerMakanan, containerKategori);
         bp.setLeft(leftContainer);
         bp.getLeft().getStyleClass().add("left");
         //====================== CENTER ==============================
@@ -124,7 +139,7 @@ public class MainMenu extends User{
         try {
             Koneksi.start();
             String sql = "SELECT * FROM restoran " +
-                    "WHERE nama_restoran like " + "'" + searchItem + "%'";
+                    "WHERE nama_restoran like " + "'%" + searchItem + "%'";
 
             ResultSet resultSet = Koneksi.statement.executeQuery(sql);
 
@@ -162,5 +177,10 @@ public class MainMenu extends User{
         container.getChildren().addAll(h2, scroll);
 
         this.setCenterOfScene(container);
+    }
+
+    public void disableButton(boolean t){
+        tambahKategori.setDisable(t);
+        tambahMakanan.setDisable(t);
     }
 }

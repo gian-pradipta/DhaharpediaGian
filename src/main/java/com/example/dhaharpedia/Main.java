@@ -37,28 +37,27 @@ public class Main extends Application {
         landingPage = new MainMenu();
         Button best = landingPage.getButtonBest();
         Button kategori = landingPage.getButtonKategori();
+        Button tambahMakanan = landingPage.tambahMakanan;
         Scene scene = landingPage.getScene();
         stage.setScene(scene);
         stage.setOnCloseRequest(e -> {
             exitConfirm(e);
         });
-        VBox top10 = top10();
+
         best.setOnMouseClicked(e -> {
 
-            landingPage.setCenterOfScene(top10);
+            landingPage.setCenterOfScene(top10());
         });
-        kategori.setOnMouseClicked(e -> {
-            FileChooser fileChooser = new FileChooser();
-            File selectedfile = fileChooser.showOpenDialog(stage);
-            if (selectedfile != null){
-                System.out.println(selectedfile.getAbsolutePath());
-            }
+        tambahMakanan.setOnMouseClicked(e -> {
+            Insert.display();
 
         });
         stage.setMaximized(true);
+
         stage.show();
-        if (!MainMenu.isLoginned){
-            Login.display();
+        if (MainMenu.loginAs.getText().equals("Loginned as a guest")){
+            MainMenu.setIsLogin(true);
+            landingPage.disableButton(true);
         }
     }
 
@@ -107,7 +106,7 @@ public class Main extends Application {
 
         try {
             Koneksi.start();
-            String sql = "SELECT * FROM restoran";
+            String sql = "SELECT * FROM restoran ORDER BY rating DESC LIMIT 10";
             ResultSet resultSet = Koneksi.statement.executeQuery(sql);
             while (resultSet.next()){
                 int id = resultSet.getInt("id");
@@ -117,7 +116,18 @@ public class Main extends Application {
                 String noTelp = resultSet.getString("no_telp");
                 String peringkat = Float.toString(resultSet.getFloat("rating"));
                 String path = resultSet.getString("path");
-                root.getChildren().add((new RumahMakan(id, nama, kategori, alamat, noTelp, peringkat, path)).getDeskripsi());
+                RumahMakan rm = new RumahMakan(id, nama, kategori, alamat, noTelp, peringkat, path);
+                if (MainMenu.loginAs.getText().equals("Loginned as Admin")){
+                    RumahMakan.disableButton(false);
+                }
+                else if (MainMenu.loginAs.getText().equals("Loginned as a guest")){
+                    RumahMakan.disableButton(true);
+                }
+                else {
+                    RumahMakan.disableButton(true);
+                    RumahMakan.disableRating(false);
+                }
+                root.getChildren().add(RumahMakan.returnRM(rm).getDeskripsi());
             }
         }
         catch (Exception e) {

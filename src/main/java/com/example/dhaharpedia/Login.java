@@ -52,6 +52,7 @@ public class Login extends User{
                         MainMenu.setIsLogin(true);
                         MainMenu.loginAs.setText("Loginned as " + username);
                         RumahMakan.disableButton(true);
+                        Main.landingPage.disableButton(true);
                         RumahMakan.disableRating(false);
                         stage.close();
                     }
@@ -59,6 +60,7 @@ public class Login extends User{
                         MainMenu.setIsLogin(true);
                         MainMenu.loginAs.setText("Loginned as Admin");
                         RumahMakan.disableButton(false);
+                        Main.landingPage.disableButton(false);
                         stage.close();
                     }
 
@@ -77,6 +79,7 @@ public class Login extends User{
                 MainMenu.setIsLogin(true);
                 MainMenu.loginAs.setText("Loginned as a guest");
                 RumahMakan.disableButton(true);
+                Main.landingPage.disableButton(true);
                 stage.close();
 
             });
